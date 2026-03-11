@@ -35,6 +35,11 @@ MMTok is a novel **multimodal approach** for efficient vision-language model (VL
 - 🧠 **Multimodal Coverage:** The first framework to formulate vision token subset selection as a coverage maximization problem, ensuring selected tokens are both semantically relevant to the text query and informationally rich.
 - 📈 **Broad Compatibility:** Consistent improvements across multiple VLM architectures (LLaVA-1.5, LLaVA-NeXT, Qwen2.5-VL) and model sizes.
 
+## 📅 Roadmap / TODO
+- [ ] **Batch Inference**: Support `batch_size > 1` for high-throughput scenarios.
+- [ ] **Video-VLM**: Extend MMTok to video understanding models (e.g., Video-LLaVA).
+- [x] **ICLR 2026 Camera-ready**: Final version of the paper and code.
+- [x] **Core Framework**: Support for LLaVA-1.5, LLaVA-NeXT, and Qwen2.5-VL.
 
 ## 🏗️ Architecture
 
@@ -46,6 +51,12 @@ MMTok is a novel **multimodal approach** for efficient vision-language model (VL
 1. **Multimodal Encoding**: Extract features from both vision and text tokens.
 2. **Coverage Computation**: Compute scores measuring how well vision tokens cover text semantics and preserve visual information.
 3. **Token Selection**: Select the optimal subset of vision tokens that maximizes multimodal coverage.
+
+## TODO
+
+[] Support Batchsize > 1
+[] Support Video-VLM
+
 
 ## 📦 Installation & Usage
 
