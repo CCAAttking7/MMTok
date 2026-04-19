@@ -15,6 +15,7 @@ For flash-attn, please follow instructions in install.md to install flash-attn.
 """
 
 import sys
+import os
 from pathlib import Path
 
 import torch
@@ -38,6 +39,12 @@ DEVICE = "cuda:0"
 ALPHA = 0.5
 TV_TEMP = 0.02
 VV_TEMP = 0.2
+
+# Optional env overrides for quick grid runs
+TARGET_VISION_TOKENS = int(os.getenv("MMTOK_TARGET_TOKENS", TARGET_VISION_TOKENS))
+ALPHA = float(os.getenv("MMTOK_ALPHA", ALPHA))
+TV_TEMP = float(os.getenv("MMTOK_TV_TEMP", TV_TEMP))
+VV_TEMP = float(os.getenv("MMTOK_VV_TEMP", VV_TEMP))
 # --------------------------------------------
 
 if __name__ == "__main__":
@@ -70,8 +77,8 @@ if __name__ == "__main__":
         language_tokenizer=tokenizer,
         target_vision_tokens=TARGET_VISION_TOKENS,
         alpha=ALPHA,
-        tv_temp=TV_TEMP,
-        vv_temp=VV_TEMP,
+        softmax_tv_temperature=TV_TEMP,
+        softmax_vv_temperature=VV_TEMP,
     )
 
     # 3) Standard LLaVA flow: conv → get_prompt → tokenizer_image_token → generate
