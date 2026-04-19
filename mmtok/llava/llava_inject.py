@@ -14,8 +14,11 @@ under the maximum coverage criterion (cover text tokens + vision token set).
 import types
 
 from loguru import logger as eval_logger
-from transformers import (CLIPTextModelWithProjection, CLIPTokenizerFast,
-                          CLIPVisionModelWithProjection)
+from transformers import (
+    CLIPTextModelWithProjection,
+    CLIPTokenizerFast,
+    CLIPVisionModelWithProjection,
+)
 
 from ..core import MMTokCore
 from .patch_llava import apply_llava_patches, set_use_padding_indices
@@ -65,7 +68,11 @@ def mmtok(model, language_tokenizer=None, target_vision_tokens=64, **mmtok_kwarg
     mmtok_config["device"] = model.device
 
     # Resolve remove_padding_indices: only LLaVA 1.5 supports True; LLaVA 1.6 must be False
-    _model_path = getattr(model.config, "_name_or_path", None) or getattr(model.config, "name_or_path", "") or ""
+    _model_path = (
+        getattr(model.config, "_name_or_path", None)
+        or getattr(model.config, "name_or_path", "")
+        or ""
+    )
     _model_path = str(_model_path).lower()
     _is_llava_15 = "llava-v1.5" in _model_path
     if mmtok_config.get("remove_padding_indices") is None:
@@ -92,8 +99,12 @@ def mmtok(model, language_tokenizer=None, target_vision_tokens=64, **mmtok_kwarg
 
     vision_tower = model.get_vision_tower()
     model.encode_images_mmtok = types.MethodType(encode_images_mmtok, model)
-    model.restore_image_features_sorted = types.MethodType(restore_image_features_sorted, model)
-    model.prepare_inputs_labels_for_multimodal = types.MethodType(prepare_inputs_labels_for_multimodal_mmtok, model)
+    model.restore_image_features_sorted = types.MethodType(
+        restore_image_features_sorted, model
+    )
+    model.prepare_inputs_labels_for_multimodal = types.MethodType(
+        prepare_inputs_labels_for_multimodal_mmtok, model
+    )
     model.encode_images_mmtok_multi = types.MethodType(encode_images_mmtok_multi, model)
 
     CLIPVisionModelWithProjection._no_split_modules = ["CLIPEncoderLayer"]
@@ -102,13 +113,19 @@ def mmtok(model, language_tokenizer=None, target_vision_tokens=64, **mmtok_kwarg
     )
 
     mmtok_core.visual_projection = vision_tower_with_projection.visual_projection
-    mmtok_core.text_tokenizer = CLIPTokenizerFast.from_pretrained(vision_tower.vision_tower_name)
+    mmtok_core.text_tokenizer = CLIPTokenizerFast.from_pretrained(
+        vision_tower.vision_tower_name
+    )
     mmtok_core.text_tower = CLIPTextModelWithProjection.from_pretrained(
         vision_tower.vision_tower_name, device_map=model.device, use_safetensors=True
     )
     mmtok_core.text_tower.requires_grad_(False)
-    mmtok_core.vision_tower_post_layernorm = vision_tower.vision_tower.vision_model.post_layernorm
-    mmtok_core.max_position_embeddings = mmtok_core.text_tower.config.max_position_embeddings
+    mmtok_core.vision_tower_post_layernorm = (
+        vision_tower.vision_tower.vision_model.post_layernorm
+    )
+    mmtok_core.max_position_embeddings = (
+        mmtok_core.text_tower.config.max_position_embeddings
+    )
     mmtok_core._main_model_embed_tokens = model.get_model().embed_tokens
     mmtok_core._language_tokenizer = language_tokenizer
 
@@ -122,7 +139,9 @@ def mmtok(model, language_tokenizer=None, target_vision_tokens=64, **mmtok_kwarg
 
     patch_conv_copy_for_hook("vicuna_v1", vision_tower)
 
-    eval_logger.info("[MMTok] LLaVA components (VisionTower, Projector, Conversation) patched; MMTok injection complete.")
+    eval_logger.info(
+        "[MMTok] LLaVA components (VisionTower, Projector, Conversation) patched; MMTok injection complete."
+    )
 
     return model
 
@@ -143,7 +162,9 @@ def patch_conv_copy_for_hook(conv_name, llava_instance):
     try:
         from llava.conversation import conv_templates
     except ImportError:
-        eval_logger.warning("[MMTok] LLaVA conversation not found. Question hooking disabled.")
+        eval_logger.warning(
+            "[MMTok] LLaVA conversation not found. Question hooking disabled."
+        )
         return
 
     if conv_name not in conv_templates:
