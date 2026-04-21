@@ -40,3 +40,15 @@ Thumbs.db
 CHECK_BEFORE_SUBMIT.md
 .gitignore
 trash
+cat > .gitignore << EOF
+results_baseline*/
+results_grid/
+results_test/
+hf_cache/
+*.bin
+*.safetensors
+*.pth
+*.ckpt
+__pycache__/
+*.pyc
+EOF

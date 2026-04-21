@@ -29,7 +29,9 @@ from llava.mm_utils import process_images, tokenizer_image_token
 from llava.model.builder import load_pretrained_model
 
 # ---------- Config (edit as needed) ----------
-MODEL_PATH = "liuhaotian/llava-v1.6-vicuna-7b"
+HF_HOME = "/root/autodl-tmp/hf_cache"
+MODEL_NAME = "llava-v1.6-vicuna-7b"
+MODEL_PATH = "/root/autodl-tmp/hf_cache/hub/models--liuhaotian--llava-v1.6-vicuna-7b/snapshots/deae57a8c0ccb0da4c2661cc1891cc9d06503d11"
 IMAGE_PATH = (
     "example/mmtok.jpg"  # Set to your image path, or put an image at example/sample.jpg
 )
@@ -55,11 +57,13 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
+    os.environ.setdefault("HF_HOME", HF_HOME)
+    os.environ.setdefault("HF_HUB_CACHE", str(Path(HF_HOME) / "hub"))
     # 1) Load LLaVA
     tokenizer, model, image_processor, _ = load_pretrained_model(
         MODEL_PATH,
         None,
-        MODEL_PATH.split("/")[-1],
+        MODEL_NAME,
         device_map=DEVICE,
         multimodal=True,
         use_safetensors=True,
